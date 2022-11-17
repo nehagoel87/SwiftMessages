@@ -78,7 +78,7 @@ open class MessageView: BaseView, Identifiable, AccessibleMessage {
             if let old = oldValue {
                 old.removeTarget(self, action: #selector(MessageView.dismissTapped(_:)), for: .touchUpInside)
             }
-            if let button = button {
+            if let button = dismissButton {
                 button.addTarget(self, action: #selector(MessageView.dismissTapped(_:)), for: .touchUpInside)
             }
         }
