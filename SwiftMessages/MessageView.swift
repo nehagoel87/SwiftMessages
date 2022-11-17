@@ -441,16 +441,28 @@ extension MessageView {
      - Parameter buttonTitle: The button title to use.
      - Parameter buttonTapHandler: The button tap handler block to use.
      */
-    public func configureContent(title: String?, body: String?, iconImage: UIImage?, iconText: String?, buttonImage: UIImage?, buttonTitle: String?, buttonTapHandler: ((_ button: UIButton) -> Void)?) {
-        titleLabel?.text = title
-        bodyLabel?.text = body
-        iconImageView?.image = iconImage
-        iconLabel?.text = iconText
-        button?.setImage(buttonImage, for: .normal)
-        button?.setTitle(buttonTitle, for: .normal)
+    public func configureContent(title: String?,
+                                 body: String?,
+                                 iconImage: UIImage?,
+                                 iconText: String?,
+                                 buttonImage: UIImage?,
+                                 buttonTitle: String?,
+                                 buttonTapHandler: ((_ button: UIButton) -> Void)?,
+                                 dismissImage: UIImage?,
+                                 dismissHandler: ((_ button: UIButton) -> Void)?) {
+        self.titleLabel?.text = title
+        self.bodyLabel?.text = body
+        self.iconImageView?.image = iconImage
+        self.iconLabel?.text = iconText
+        self.button?.setImage(buttonImage, for: .normal)
+        self.button?.setTitle(buttonTitle, for: .normal)
+        self.button?.isHidden = (buttonTapHandler == nil)
         self.buttonTapHandler = buttonTapHandler
-        iconImageView?.isHidden = iconImageView?.image == nil
-        iconLabel?.isHidden = iconLabel?.text == nil
+        self.dismissButton?.setImage(buttonImage, for: .normal)
+        self.dismissHandler = dismissHandler
+        self.dismissButton?.isHidden = (dismissImage == nil)
+        self.iconImageView?.isHidden = (iconImageView?.image == nil)
+        self.iconLabel?.isHidden = (iconLabel?.text == nil)
     }
 }
 
