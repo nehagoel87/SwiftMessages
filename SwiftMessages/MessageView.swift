@@ -23,20 +23,26 @@ open class MessageView: BaseView, Identifiable, AccessibleMessage {
     @objc func buttonTapped(_ button: UIButton) {
         buttonTapHandler?(button)
     }
-
+    
+    open var dismissHandler: ((_ button: UIButton) -> Void)?
+    
+    @objc func dismissTapped(_ button: UIButton) {
+        dismissHandler?(button)
+    }
+    
     /*
      MARK: - Touch handling
      */
-
+    
     open override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         // Only accept touches within the background view. Anything outside of the
         // background view's bounds should be transparent and does not need to receive
         // touches. This helps with tap dismissal when using `DimMode.gray` and `DimMode.color`.
         return backgroundView == self
-            ? super.point(inside: point, with: event)
-            : backgroundView.point(inside: convert(point, to: backgroundView), with: event)
+        ? super.point(inside: point, with: event)
+        : backgroundView.point(inside: convert(point, to: backgroundView), with: event)
     }
-
+    
     /*
      MARK: - IB outlets
      */
@@ -67,6 +73,17 @@ open class MessageView: BaseView, Identifiable, AccessibleMessage {
         }
     }
     
+    @IBOutlet open var dismissButton: UIButton?{
+        didSet {
+            if let old = oldValue {
+                old.removeTarget(self, action: #selector(MessageView.dismissTapped(_:)), for: .touchUpInside)
+            }
+            if let button = button {
+                button.addTarget(self, action: #selector(MessageView.dismissTapped(_:)), for: .touchUpInside)
+            }
+        }
+    }
+    
     /*
      MARK: - Identifiable
      */
@@ -81,11 +98,11 @@ open class MessageView: BaseView, Identifiable, AccessibleMessage {
     }
     
     private var customId: String?
-
+    
     /*
      MARK: - AccessibleMessage
      */
-
+    
     /**
      An optional prefix for the `accessibilityMessage` that can
      be used to further clarify the message for VoiceOver. For example,
@@ -93,21 +110,21 @@ open class MessageView: BaseView, Identifiable, AccessibleMessage {
      a warning, in which case one may specify the value "warning".
      */
     open var accessibilityPrefix: String?
-
+    
     open var accessibilityMessage: String? {
-        #if swift(>=4.1)
+#if swift(>=4.1)
         let components = [accessibilityPrefix, titleLabel?.text, bodyLabel?.text].compactMap { $0 }
-        #else
+#else
         let components = [accessibilityPrefix, titleLabel?.text, bodyLabel?.text].flatMap { $0 }
-        #endif
+#endif
         guard components.count > 0 else { return nil }
         return components.joined(separator: ", ")
     }
-
+    
     public var accessibilityElement: NSObject? {
         return backgroundView
     }
-
+    
     open var additionalAccessibilityElements: [NSObject]? {
         var elements: [NSObject] = []
         func getAccessibleSubviews(view: UIView) {
@@ -130,8 +147,8 @@ open class MessageView: BaseView, Identifiable, AccessibleMessage {
  MARK: - Creating message views
  
  This extension provides several convenience functions for instantiating
- `MessageView` from the included nib files in a type-safe way. These nib 
- files can be found in the Resources folder and can be drag-and-dropped 
+ `MessageView` from the included nib files in a type-safe way. These nib
+ files can be found in the Resources folder and can be drag-and-dropped
  into a project and modified. You may still use these APIs if you've
  copied the nib files because SwiftMessages looks for them in the main
  bundle first. See `SwiftMessages` for additional nib loading options.
@@ -154,22 +171,22 @@ extension MessageView {
          A floating card-style view with rounded corners.
          */
         case cardView = "CardView"
-
+        
         /**
          Like `CardView` with one end attached to the super view.
          */
         case tabView = "TabView"
-
+        
         /**
          A 20pt tall view that can be used to overlay the status bar.
          Note that this layout will automatically grow taller if displayed
          directly under the status bar (see the `ContentInsetting` protocol).
          */
         case statusLine = "StatusLine"
-
+        
         /**
          A floating card-style view with elements centered and arranged vertically.
-         This view is typically used with `.center` presentation style.         
+         This view is typically used with `.center` presentation style.
          */
         case centeredView = "CenteredView"
     }
@@ -205,7 +222,7 @@ extension MessageView {
 
 /*
  MARK: - Layout adjustments
-
+ 
  This extension provides a few convenience functions for adjusting the layout.
  */
 
@@ -352,7 +369,7 @@ extension MessageView {
  message content. You are encouraged to write your own such functions
  if these don't exactly meet your needs.
  
- SwiftMessages does not try to be clever by adjusting the layout based on 
+ SwiftMessages does not try to be clever by adjusting the layout based on
  what content you configure. All message elements are optional and it is
  up to you to hide or remove elements you don't need. The easiest way to
  remove unwanted elements is to drag-and-drop one of the included nib
