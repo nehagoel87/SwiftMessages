@@ -458,7 +458,7 @@ extension MessageView {
         self.button?.setTitle(buttonTitle, for: .normal)
         self.button?.isHidden = (buttonTapHandler == nil)
         self.buttonTapHandler = buttonTapHandler
-        self.dismissButton?.setImage(buttonImage, for: .normal)
+        self.dismissButton?.setImage(dismissImage, for: .normal)
         self.dismissHandler = dismissHandler
         self.dismissButton?.isHidden = (dismissImage == nil)
         self.iconImageView?.isHidden = (iconImageView?.image == nil)
